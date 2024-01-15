@@ -23,29 +23,29 @@
         <a href="Transport.html">交通管理</a>
         <a href="admin.php">網站管理</a>
     </nav>
-    <h1>網站管理-登入</h1>
-    <div class="box">
+    <h1>網站管理 登入</h1>
+    <form class="box" method="post" action="api.php?login">
         <div class="input">
-            <input type="text">
+            <input type="text" v-model="account" name="account">
             <label for="">帳號</label>
         </div>
         <div class="input">
-            <input type="text">
+            <input type="text" v-model="password" name="password">
             <label for="">密碼</label>
         </div>
         <div class="input">
-            <input type="text" v-model="answer">
+            <input type="text" v-model="verify" name="verify">
             <label for="">圖形驗證碼</label>
         </div>
         <div class="verify">
-            <img src="verify.php" width="100" alt="">
-            <button>驗證碼重新產生</button>
+            <img :src="url" width="100" alt="">
+            <button @click="verify_reset" type="button">驗證碼重新產生</button>
         </div>
         <div class="button">
-            <button class="reset">重設</button>
-            <button class="login">送出</button>
+            <button class="reset" type="button" @click="reset">重設</button>
+            <button class="login" type="submit">送出</button>
         </div>
-    </div>
+    </form>
 </div>
 <script>
     const {ref, reactive} = Vue
@@ -54,8 +54,16 @@
             let account = ref("")
             let password = ref("")
             let verify = ref("")
-            let answer = ref()
-            return {account, password, verify, answer}
+            let url = ref("verify.php")
+            const verify_reset = () => {
+                url.value = "verify.php?" + Math.random().toString();
+            }
+            const reset = () => {
+                account.value = "";
+                password.value = "";
+                verify.value = "";
+            }
+            return {account, password, verify, url, verify_reset, reset}
         }
     }).mount("#app")
 </script>
@@ -63,10 +71,10 @@
 </html>
 <style>
     h1{
-        width: 1000px; color: white;
+        width: 800px; color: white;
     }
     .box{
-        width: 1000px; height: 600px;
+        width: 800px; height: 450px;
         position: relative;
         background-color: white;
         padding: 20px;

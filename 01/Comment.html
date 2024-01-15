@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script src="vue3.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+    <nav>
+        <a href="index.html">首頁</a>
+        <a href="Comment.html">訪客留言</a>
+        <a href="Book.html">訪客訂房</a>
+        <a href="Order.html">訪客訂餐</a>
+        <a href="Transport.html">交通管理</a>
+        <a href="admin.php">網站管理</a>
+    </nav>
+    <div class="title">
+        <h1>訪客留言列表</h1>
+        <button class="button" onclick="location.href='new_Comment.html'">新增留言</button>
+    </div>
+    <div class="box">
+        <div style="width: 100%; height: 100%;">
+            <div class="comment">
+                <div class="name">name</div>
+                <div class="content">content</div>
+                <div class="other_data">email&phone&time</div>
+                <div class="set">set</div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<script>
+    const {reactive, onMounted} = Vue
+    Vue.createApp({
+        setup(){
+            let date = reactive([])
+            
+            onMounted(async() => {
+                let request = await fetch("api.php?get_comment")
+                let json = await request.json()
+                json.forEach((e) => date.push(e))
+            })
+            return {date}
+        }
+    }).mount("#app")
+</script>
+</body>
+</html>
+<style>
+    .title{
+        margin-top: 10px;
+        width: 1200px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    h1{
+        color: white;
+    }
+    .button{
+        margin: 10px;
+        font-size: 20px;
+        background-color: cornflowerblue;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
+    .box{
+        width: 1200px; height: 600px;
+        position: relative;
+        background-color: white;
+        padding: 20px;
+        border: none;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow-y: scroll;
+    }
+    .comment{
+        width: 100%;
+        height: 150px;
+        margin-bottom: 10px;
+        border: 1px solid black;
+        display: grid;
+        grid-template-columns: repeat(10,1fr);
+        grid-template-rows: repeat(3,1fr);
+    }
+    .comment>div{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .name{
+        grid-row: 1 / 3;
+        grid-column: 1 / 3;
+    }
+    .content{
+        grid-row: 1 / 3;
+        grid-column: 3 / 9;
+    }
+    .other_data{
+        grid-row: 3 / 4;
+        grid-column: 1 / 9;
+    }
+    .set{
+        grid-row: 1 / 4;
+        grid-column: 9 / 11;
+    }
+</style>
