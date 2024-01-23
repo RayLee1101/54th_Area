@@ -1,3 +1,6 @@
+<?php
+    $id = $_GET['id'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +21,7 @@
         <a href="admin.php">網站管理</a>
     </nav>
     <div class="title">
-        <h1>訪客留言 新增</h1>
+        <h1>訪客留言 編輯</h1>
         <button class="button" onclick="location.href='Comment.html'">回留言列表</button>
     </div>
     <div class="box">
@@ -27,10 +30,18 @@
             <label for="">姓名</label>
         </div>
         <div class="input">
+            <div class="state">
+                <input type="checkbox" v-model="email_state" name="" id="">
+                <p>顯示</p>
+            </div>
             <input type="text" v-model="email">
             <label for="">E-mail</label>
         </div>
         <div class="input">
+            <div class="state">
+                <input type="checkbox" v-model="phone_state" name="" id="">
+                <p>顯示</p>
+            </div>
             <input type="text" v-model="phone">
             <label for="">電話</label>
         </div>
@@ -49,12 +60,15 @@
     </div>
 </div>
 <script>
-    const { ref } = Vue
+    const { ref, onMounted } = Vue
     Vue.createApp({
         setup(){
+            let id = ref("<?=$id?>")
             let name = ref("")
             let email = ref("")
+            let email_state = ref()
             let phone = ref("")
+            let phone_state = ref()
             let content = ref("")
             let number = ref("")
             const reset = () => {
@@ -86,6 +100,7 @@
                     return
                 }
                 if(number.value.length!=4){
+                    console.log((number.value.length));
                     alert("留言序號長度錯誤")
                     return
                 }
@@ -102,10 +117,12 @@
                 let formdata = new FormData()
                 formdata.append("name", name.value)
                 formdata.append("email", email.value)
+                formdata.append("email_state", (email_state.value)?1:0)
                 formdata.append("phone", phone.value)
+                formdata.append("phone_state", (phone_state.value)?1:0)
                 formdata.append("content", content.value)
                 formdata.append("number", number.value)
-                let resquest = await fetch("api.php?new_comment",{
+                let resquest = await fetch(`api.php?set_comment&id=${parseInt(id.value) + 1}`,{
                     method: "POST",
                     body: formdata
                 })
@@ -115,7 +132,18 @@
                 else
                     alert(json);
             }
-            return{ name, email, phone, content, number, reset, send }
+            onMounted(async() => {
+                let request = await fetch("api.php?get_comment")
+                let json = await request.json()
+                name.value = json[id.value].name;
+                email.value = json[id.value].email;
+                email_state.value = json[id.value].email_state == 1;
+                phone.value = json[id.value].phone;
+                phone_state.value = json[id.value].phone_state == 1;
+                content.value = json[id.value].content;
+                number.value = json[id.value].number;
+            })
+            return{ name, email, phone, content, number, reset, send, email_state, phone_state }
         }
     }).mount("#app")
 </script>
@@ -195,5 +223,18 @@
         border: none;
         padding: 10px 20px;
         border-radius: 10px;
+    }
+    .state{
+        display: flex;
+        height: 100px;
+        top: calc(50% - 50px);
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        right: -100px;
+    }
+    .state>p{
+        color: cornflowerblue;
+        font-size: 20px;
     }
 </style>
