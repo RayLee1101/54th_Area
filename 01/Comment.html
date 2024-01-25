@@ -45,7 +45,10 @@
                     </div>
                 </div>
                 <div class="del_comment" v-else>
-
+                    <div class="del_name">{{item.name}}</div>
+                    <div class="del_content"></div>
+                    <div class="del_time">發表於：{{item.create_time}}，刪除於：{{item.delete_time}}</div>
+                    <div class="del_set">已刪除</div>
                 </div>
             </div>
         </div>
@@ -86,25 +89,7 @@
 </body>
 </html>
 <style>
-    .title{
-        margin-top: 50px;
-        width: 1200px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    h1{
-        color: white;
-    }
-    .button{
-        margin: 10px;
-        font-size: 20px;
-        background-color: cornflowerblue;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 10px;
-    }
+    
     .box{
         width: 1200px; height: 650px;
         position: relative;
@@ -126,7 +111,7 @@
         grid-template-columns: repeat(10,1fr);
         grid-template-rows: repeat(5,40px);
     }
-    .comment>div{
+    .comment > div, .del_comment>div{
         display: flex;
         align-items: center;
         border: 1px solid cornflowerblue;
@@ -177,5 +162,37 @@
         border-radius: 8px;
         padding: 5px 10px 5px 10px;
         margin: 2px;
+    }
+    .del_comment{
+        width: 100%;
+        height: 100px;
+        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: repeat(10,1fr);
+        grid-template-rows: repeat(4,25px);
+    }
+    .del_name{
+        font-size: 20px;
+        grid-row: 1 / 4;
+        grid-column: 1 / 3;
+        justify-content: center;
+    }
+    .del_content{
+        font-size: 20px;
+        grid-row: 1 / 4;
+        grid-column: 3 / 9;
+        justify-content: center;
+    }
+    .del_time{
+        grid-row:  4 / 5;
+        grid-column: 1 / 9;
+    }
+    .del_set{
+        font-size: 20px;
+        grid-row: 1 / 5;
+        grid-column: 9 / 11;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>

@@ -12,7 +12,7 @@ nav{
     position: absolute;
     background-color: white;
     top: 0;
-    height: 100px; width: calc(100vw - 200px);
+    height: 75px; width: calc(100vw - 200px);
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -26,3 +26,45 @@ nav > a{
     text-decoration: none;
     text-align: center;
 }
+.title{
+    margin-top: 50px;
+    width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.title>h1{
+    color: white;
+}
+.title>button{
+    margin: 10px;
+    font-size: 20px;
+    background-color: cornflowerblue;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    
+}
+.send{
+    position: absolute;
+    bottom:0; right:0;
+}
+.reset{
+    margin: 10px;
+    font-size: 20px;
+    background-color: white;
+    color: cornflowerblue;
+    border: 1px solid cornflowerblue;
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+.login{
+    margin: 10px;
+    font-size: 20px;
+    background-color: cornflowerblue;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+}   

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="vue3.js"></script>
+</head>
+<body>
+<div id="app">
+    <nav>
+        <a href="index.html">首頁</a>
+        <a href="Comment.html">訪客留言</a>
+        <a href="Book.html">訪客訂房</a>
+        <a href="Order.html">訪客訂餐</a>
+        <a href="Transport.html">交通管理</a>
+        <a href="admin.php">網站管理</a>
+    </nav>
+    <div class="title">
+            <h1>訪客訂房 選擇訂房資訊</h1>
+        </div>
+    <div class="box">
+        
+        <div class="set">
+            <p @click="month_set(-1)">前一個月<<</p>
+            <p>{{year}} {{month}}月</p>
+            <p @click="month_set(1)">>>下一個月</p>
+        </div>
+        <table class="month" border="1">
+            <tr class="week">
+                <td>日</td>
+                <td>一</td>
+                <td>二</td>
+                <td>三</td>
+                <td>四</td>
+                <td>五</td>
+                <td>六</td>
+            </tr>
+            <tr v-for="(item,idx) in DayInWeek">
+                <td v-for="i in 7" @click="select(idx, i -1)" :style="{background:(item[i-1][2])?'yellow':'white'}">
+                    <p class="day">{{item[i-1][0]}}</p>
+                    <p v-if="item[i-1][0] != undefined" >$5000/{{item[i-1][1]}}間</p>
+                </td>
+            </tr>
+        </table>
+        <div class="data">
+            <div>訂房數量</div>
+            <select v-model="sum">
+                <option v-for="idx in 8" :value="idx"> {{idx}} 間</option>
+            </select>
+        </div>
+        <div class="data">
+            <div>入住天數</div>
+            <input type="text" v-model="daynum">
+        </div>
+        <div class="data">
+            <div>入住日期</div>
+            <input type="text" name="" id="" v-model="firstday">
+            <div>到</div>
+            <input type="text" name="" id="" v-model="lastday">
+        </div>
+        <div class="data">
+            <div>房號</div>
+            <input type="text" v-model="room">
+            <button>自動產生房號</button>
+            <button>選擇房號</button>
+        </div>
+        <div class="send">
+            <button class="reset" @click="cancel">取消</button>
+            <button class="login" @click="send">送出</button>
+        </div>
+    </div>
+</div>
+<script>
+    const {ref, reactive, onMounted} = Vue
+    Vue.createApp({
+        setup(){
+            let year = ref(2024)
+            let month = ref(3)
+            let DayInWeek = ref([])
+
+            let sum = ref(1)
+            let daynum = ref("0天")
+            let firstday = ref("")
+            let first = ref()
+            let lastday = ref("")
+            let last = ref()
+            let room = ref("")
+
+            const month_set = (idx) =>{
+                month.value += idx;
+                if(month.value == 0){
+                    month.value = 12;
+                    year.value--;
+                }
+                if(month.value == 13){
+                    month.value = 1
+                    year.value++;
+                }
+                get_day()
+            }
+            const select = (i, j) => {
+                if(DayInWeek.value[i][j][0]==undefined) return
+                let week = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"]
+                if(firstday.value == ""){
+                    firstday.value = year.value + "-" + String(month.value).padStart(2,"0") + "-" + String(DayInWeek.value[i][j][0]).padStart(2, "0") + week[j]
+                    lastday.value = year.value + "-" + String(month.value).padStart(2,"0") + "-" + String(DayInWeek.value[i][j][0]).padStart(2, "0") + week[j]
+                    first.value = DayInWeek.value[i][j][0]
+                    DayInWeek.value[i][j][2] = true
+                    daynum.value = 1 + "天"
+                }else if(firstday.value != "" && lastday.value == firstday.value){
+                    if(DayInWeek.value[i][j][0] < first.value) return
+                    lastday.value = year.value + "-" + String(month.value).padStart(2,"0") + "-" + String(DayInWeek.value[i][j][0]).padStart(2, "0") + week[j]
+                    last.value = DayInWeek.value[i][j][0]
+                    for(let i = 0; i < DayInWeek.value.length; i++){
+                        for(let j = 0; j < 7; j++){
+                            if(DayInWeek.value[i][j][0] >= first.value && DayInWeek.value[i][j][0] <= last.value)
+                            DayInWeek.value[i][j][2] = true
+                        } 
+                    }
+                    daynum.value = (DayInWeek.value[i][j][0] - first.value + 1) + "天"
+                }
+            }
+            const get_day = () => {
+                DayInWeek.value = []
+                DayInWeek.value.push(["","","","","","",""])
+                let idx = 0;
+                const allday = new Date(year.value, month.value, 0).getDate()
+                for(let i = 1; i <= allday; i++){
+                    const day = new Date(year.value, month.value -1, i).getDay()
+                    DayInWeek.value[idx][day] = [i, 8, false];
+                    if(day == 6) {
+                        idx++;
+                        DayInWeek.value.push(["","","","","","",""])
+                    }
+                }
+            }
+            const cancel = () => {
+                get_day();
+                sum.value = 1
+                daynum.value = "0天"
+                firstday.value ="" 
+                first.value = ""
+                lastday.value ="" 
+                last.value = ""
+                room.value = ""
+            }
+            const send = () => {
+
+            }
+            onMounted(() => {
+                get_day()
+            })
+            return{year, month, month_set, DayInWeek, select, sum, daynum, firstday, lastday, room, cancel, send}
+        }
+    }).mount("#app")
+</script>
+</body>
+</html>
+<style>
+    .title{
+        position: absolute;
+        top: 50px; left: 20px;
+    }
+    .title>h1{
+        font-size: 30px;
+    }
+    .box{
+        position: relative;
+        margin-top: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        width: 1250px;
+        height: 800px;
+        border-radius: 8px;
+    }
+    .month{
+        width: 60%;
+        text-align: center;
+        border: 1px solid cornflowerblue;
+    }
+    td{
+        width: 50px;
+        height: 75px;
+    }
+    p{
+        margin: 0;
+        font-size: 12px;
+    }
+    .day{
+        font-size: 25px;
+    }
+    .week>td{
+        height: 25px;
+    }
+    .data{
+        display: flex;
+        width: 60%;
+    }
+    .data>div, .data> button{
+        padding: 10px 20px;
+        border: none;
+        background-color: cornflowerblue;
+        color: white;
+        font-size: 20px;
+        border-radius: 8px;
+        margin: 2px;
+    }
+    .data>input,.data>select{
+        font-size: 20px;
+        border: 1px solid cornflowerblue;
+        color: cornflowerblue;
+        border-radius: 8px;
+        margin: 2px;
+    }
+    .set{
+        width: 60%;
+        display: flex;
+        justify-content: space-around;
+        background: cornflowerblue;
+        border-radius: 8px;
+    }
+    .set>p{
+        color: white;
+        font-size: 20px;
+    }
+</style>
