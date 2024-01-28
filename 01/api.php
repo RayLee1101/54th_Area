@@ -51,4 +51,9 @@
         $pdo -> query("UPDATE `comment` SET `name` = '$name', `email` = '$email', `email_state` = '$email_state', `phone` = '$phone', `phone_state` = '$phone_state', `content` = '$content', `number` = '$number' WHERE `comment`.`id` = $id");
         echo JSON_encode("success");
     }
+    if(isset($_GET['get_day_num'])){
+        $day = $_GET['day'];
+        $rows = $pdo -> query("SELECT* FROM `book` WHERE `firstday` <= $day AND `lastday` >= $day") -> fetchAll(2);
+        echo JSON_encode($rows);
+    }
 ?>
