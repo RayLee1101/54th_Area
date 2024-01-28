@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script src="vue3.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+    <nav>
+        <a href="index.html">首頁</a>
+        <a href="Comment.html">訪客留言</a>
+        <a href="Book.html">訪客訂房</a>
+        <a href="Order.html">訪客訂餐</a>
+        <a href="Transport.html">交通管理</a>
+        <a href="admin.php">網站管理</a>
+    </nav>
+    <div class="title">
+        <h1>訪客留言 列表</h1>
+        <button class="button" onclick="location.href='new_Comment.html'">新增留言</button>
+    </div>
+    <div class="box">
+        <div style="width: 100%; height: 100%;">
+            <div v-for="(item, idx) in date">
+                <div class="comment" v-if="item.delete_time == null">
+                    <div class="name">{{item.name}}</div>
+                    <div class="content">{{item.content}}</div>
+                    <div class="other_data">
+                        <p>E-mail：{{item.email}}</p>
+                        <p>電話：{{item.phone}}</p>
+                    </div>
+                    <div class="time">
+                        <p>發表於：{{item.create_time}}</p>
+                        <p v-if="item.create_time != item.update_time">更新於：{{item.update_time}}</p>
+                    </div>
+                    <div class="set">
+                        <p>留言序號：</p>
+                        <input type="text" v-model="num_array[idx]">
+                        <p>
+                            <button @click="set(idx)">編輯</button>
+                            <button @click="del(idx)">刪除</button>
+                        </p>
+                    </div>
+                </div>
+                <div class="del_comment" v-else>
+                    <div class="del_name">{{item.name}}</div>
+                    <div class="del_content"></div>
+                    <div class="del_time">發表於：{{item.create_time}}，刪除於：{{item.delete_time}}</div>
+                    <div class="del_set">已刪除</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const {reactive, onMounted} = Vue
+    Vue.createApp({
+        setup(){
+            let date = reactive([])
+            let num_array = reactive([])
+            const set = (idx) => {
+                if(num_array[idx] != date[idx].number) alert("留言序號錯誤")
+                else location.href=`set_comment.php?id=${idx}`
+            }
+            const del = async (idx) => {
+                if(num_array[idx] != date[idx].number) alert("留言序號錯誤")
+                else{
+                    let request = await fetch(`api.php?del_comment&id=${idx + 1}`)
+                    let json = await request.json()
+                    if(json=="success"){
+                        alert("刪除成功")
+                        location.reload()
+                    }
+                }
+            }
+
+            onMounted(async() => {
+                let request = await fetch("api.php?get_comment")
+                let json = await request.json()
+                json.forEach((e) => date.push(e))
+                num_array.length = date.length
+            })
+            return { date, set, del, num_array }
+        }
+    }).mount("#app")
+</script>
+</body>
+</html>
+<style>
+    
+    .box{
+        width: 1200px; height: 650px;
+        position: relative;
+        background-color: white;
+        padding: 20px;
+        border: none;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow-y: scroll;
+    }
+    .comment{
+        width: 100%;
+        height: 200px;
+        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: repeat(10,1fr);
+        grid-template-rows: repeat(5,40px);
+    }
+    .comment > div, .del_comment>div{
+        display: flex;
+        align-items: center;
+        border: 1px solid cornflowerblue;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .name{
+        font-size: 20px;
+        grid-row: 1 / 4;
+        grid-column: 1 / 3;
+        justify-content: center;
+    }
+    .content{
+        font-size: 20px;
+        grid-row: 1 / 4;
+        grid-column: 3 / 9;
+        justify-content: center;
+    }
+    .other_data{
+        grid-row: 4 / 5;
+        grid-column: 1 / 9;
+    }
+    
+    .time{
+        grid-row: 5 / 6;
+        grid-column: 1 / 9;
+    }
+    .time > p, .other_data > p{
+        margin-right: 10px;
+    }
+    .set{
+        grid-row: 1 / 6;
+        grid-column: 9 / 11;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    input{
+        width: 100px;
+        border: 1px solid cornflowerblue;
+        color: cornflowerblue;
+    }
+    button{
+        background-color: cornflowerblue;
+        color: white;
+        border: none;
+        font-size: 15px;
+        border-radius: 8px;
+        padding: 5px 10px 5px 10px;
+        margin: 2px;
+    }
+    .del_comment{
+        width: 100%;
+        height: 100px;
+        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: repeat(10,1fr);
+        grid-template-rows: repeat(4,25px);
+    }
+    .del_name{
+        font-size: 20px;
+        grid-row: 1 / 4;
+        grid-column: 1 / 3;
+        justify-content: center;
+    }
+    .del_content{
+        font-size: 20px;
+        grid-row: 1 / 4;
+        grid-column: 3 / 9;
+        justify-content: center;
+    }
+    .del_time{
+        grid-row:  4 / 5;
+        grid-column: 1 / 9;
+    }
+    .del_set{
+        font-size: 20px;
+        grid-row: 1 / 5;
+        grid-column: 9 / 11;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

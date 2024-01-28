@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script src="vue3.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+    <nav>
+        <a href="index.html">首頁</a>
+        <a href="Comment.html">訪客留言</a>
+        <a href="Book.html">訪客訂房</a>
+        <a href="Order.html">訪客訂餐</a>
+        <a href="Transport.html">交通管理</a>
+        <a href="admin.php">網站管理</a>
+    </nav>
+</div>
+<script>
+    const {ref, reactive} = Vue
+    Vue.createApp({
+        setup(){
+
+            return {}
+        }
+    }).mount("#app")
+</script>
+</body>
+</html>
+<style>
+    
+</style>
