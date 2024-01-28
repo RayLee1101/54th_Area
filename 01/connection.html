@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="vue3.js"></script>
+</head>
+<body>
+    <div id="app">
+        <nav>
+            <a href="index.html">首頁</a>
+            <a href="Comment.html">訪客留言</a>
+            <a href="Book.html">訪客訂房</a>
+            <a href="Order.html">訪客訂餐</a>
+            <a href="Transport.html">交通管理</a>
+            <a href="admin.php">網站管理</a>
+        </nav>
+        <div class="title">
+            <h1>訪客訂房 填寫聯絡方式</h1>
+        </div>
+        <div class="box">
+            <div class="input">
+                <input type="text" v-model="name">
+                <label for="">姓名</label>
+            </div>
+            <div class="input">
+                <input type="text" v-model="email">
+                <label for="">E-mail</label>
+            </div>
+            <div class="input">
+                <input type="text" v-model="phone">
+                <label for="">電話</label>
+            </div>
+            <div class="input">
+                <textarea name="" id="" cols="30" rows="10" v-model="remark" style="height: 150px;"></textarea>
+                <label for="">備註</label>
+            </div>
+            <div class="send">
+                <button class="reset" @click="reset">重設</button>
+                <button class="login" @click="send">送出</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const {ref} = Vue
+        Vue.createApp({
+            setup(){
+                let name = ref("")
+                let email = ref("")
+                let phone = ref("")
+                let remark = ref("")
+
+                const reset = () => {
+                    name.value = ""
+                    email.value = ""
+                    phone.value = ""
+                    remark.value = ""
+                }
+
+                const send = async() => {
+                    let email_check = /[@.]+/g
+                    if(name.value == ""){
+                        alert("姓名不可為空")
+                        return
+                    }
+                    if(email.value == ""){
+                        alert("E-mail不可為空")
+                        return
+                    }
+                    if(!email_check.test(email.value)) {
+                        alert("電子郵件有誤")
+                        return
+                    }
+                    if(phone.value == ""){
+                        alert("電話不可為空")
+                        return
+                    }
+                    let phone_check = /[^0-9-]/g
+                    if(phone_check.test(phone.value)){
+                        alert("電話號碼有誤")
+                        return
+                    }
+                    let formdata = new FormData()
+                    formdata.append("name", name.value)
+                    formdata.append("email", email.value)
+                    formdata.append("phone", phone.value)
+                    formdata.append("remark", remark.value)
+                    formdata.append("first", localStorage.getItem("first"))
+                    formdata.append("last", localStorage.getItem("last"))
+                    formdata.append("room", localStorage.getItem("room"))
+                    let resquest = await fetch("api.php?new_book",{
+                        method: "POST",
+                        body: formdata
+                    })
+                    let json = await resquest.json()
+                    if(json == "success")
+                        location.href="book_success.html?room_id"
+                    else
+                        alert(json)
+                }
+                return{name, email, phone, remark, reset, send}
+            }
+        }).mount("#app")
+    </script>
+</body>
+</html>
+<style>
+    .box{
+        width: 1200px; height: 650px;
+        position: relative;
+        background-color: white;
+        padding: 20px;
+        border: none;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .input{
+        position: relative;
+        width: 70%;
+        margin: 15px
+    }
+    .input>input,.input>textarea{
+        width: 100%;
+        outline: none;
+        border: 1px solid CornflowerBlue;
+        color: CornflowerBlue;
+        border-radius: 8px;
+        font-size: 25px;
+        padding: 12px;
+    }
+    .input>label{
+        font-size: 18px;
+        color: CornflowerBlue;
+        position: absolute;
+        background: white;
+        top: -10px; left: 15px;
+    }
+    .send{
+        position: absolute;
+        bottom:0; right:0;
+    }
+    .reset{
+        margin: 10px;
+        font-size: 20px;
+        background-color: white;
+        color: cornflowerblue;
+        border: 1px solid cornflowerblue;
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
+    .login{
+        margin: 10px;
+        font-size: 20px;
+        background-color: cornflowerblue;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
+</style>

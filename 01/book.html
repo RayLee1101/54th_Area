@@ -223,11 +223,10 @@
                 if(first.value == null||room.value == null)
                     alert("請輸入完整資料")
                 else{
-                    let formdata = new FormData()
-                    formdata.append("sum",sum.value)
-                    formdata.append("first",first.value)
-                    formdata.append("last",last.value)
-                    formdata.append("room", room.value)
+                    localStorage.setItem("first", first.value)
+                    localStorage.setItem("last", last.value)
+                    localStorage.setItem("room", room.value)
+                    location.href="connection.html"
                 }
             }
             onMounted(() => {
