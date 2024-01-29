@@ -20,7 +20,7 @@
         <a href="Comment.html">訪客留言</a>
         <a href="Book.html">訪客訂房</a>
         <a href="Order.html">訪客訂餐</a>
-        <a href="Transport.html">交通管理</a>
+        <a href="Transport.html">交通資訊</a>
         <a href="admin.php">網站管理</a>
     </nav>
     <h1>網站管理 登入</h1>

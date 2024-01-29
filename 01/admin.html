@@ -14,21 +14,169 @@
         <a href="Comment.html">訪客留言</a>
         <a href="Book.html">訪客訂房</a>
         <a href="Order.html">訪客訂餐</a>
-        <a href="Transport.html">交通管理</a>
+        <a href="Transport.html">交通資訊</a>
         <a href="admin.php">網站管理</a>
     </nav>
+
+    <div class="box">
+        <div class="title">
+            <div :class="(selected == 'comment')?'selected':'option'" @click="selected='comment'">留言管理</div>
+            <div :class="(selected == 'book')?'selected':'option'" @click="selected='book'">訂房管理</div>
+        </div>
+        <div class="content_title" v-if="selected=='comment'">
+            <p>姓名</p>
+            <p>Email</p>
+            <p>電話</p>
+            <p>內容</p>
+            <p>狀態</p>
+            <p></p>
+            <p></p>
+        </div>
+        <div class="content_title" v-if="selected=='book'">
+
+        </div>
+        <div class="content" v-if="selected=='comment'">
+            <div v-for="(item, idx) in comments">
+                <p>{{item.name}}</p>
+                <p>{{item.email}}</p>
+                <p>{{item.phone}}</p>
+                <p>{{item.content}}</p>
+                <p>{{(item.delete_time==null)?'存在':'已刪除'}}</p>
+                <p><button class="btn" @click="content_detail(idx)">詳細</button></p>
+                <p><button class="btn" @click="content_delete(idx)">刪除</button></p>
+            </div>
+        </div>
+        <div class="content" v-if="selected=='book'">
+            <!-- <div v-for="(item, idx) in comments">
+                <p>{{item.name}}</p>
+                <p>{{item.email}}</p>
+                <p>{{item.phone}}</p>
+                <p>{{item.content}}</p>
+                <p>{{(item.delete_time==null)?'存在':'已刪除'}}</p>
+                <p><button class="btn" >詳細</button></p>
+                <p><button class="btn">刪除</button></p>
+            </div> -->
+        </div>
+    </div>
 </div>
 <script>
-    const {ref, reactive} = Vue
+    const {ref, reactive, onMounted, } = Vue
     Vue.createApp({
         setup(){
+            let selected = ref("comment")
+            let comments = reactive([])
+            let orders = reactive([])
+            
+            const content_detail = (idx) => {
+                location.href=`http://127.0.0.1/54th_Area/01/set_comment.php?id=${idx}`
+            }
 
-            return {}
+            const content_delete = async(idx) => {
+                if(confirm("你確定要刪除嗎")){
+                    let resquest = await fetch(`api.php?delete_comment&id=${comments[idx].id}`)
+                    let json = await resquest.json()
+                    if(json!="success")
+                        alert(json)
+                }
+            }
+
+            onMounted(async() => {
+                let resquest = await fetch("api.php?get_comment")
+                let json = await resquest.json()
+                json.forEach(element => {
+                    comments.push(element)
+                });
+            })
+            return {selected, comments, orders, content_detail, content_delete}
         }
     }).mount("#app")
 </script>
 </body>
 </html>
 <style>
+    .box{
+        width: 1400px; height: 650px;
+        position: relative;
+        top: 50px;
+        background-color: white;
+        padding: 20px;
+        border: none;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+    }
     
+    .title{
+        display: flex;
+        justify-content: start;
+        width: 1400px;
+        position: absolute;
+        top: -100px;
+    }
+    .title > div{
+        width: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 20px;
+        margin-right: 10px;
+    }
+    .selected{
+        padding: 10px;
+        padding-bottom: 20px;
+        background-color: white;
+    }
+    .option{
+        background: rgb(235,235,235);
+        padding: 10px;
+    }
+    .content_title{
+        width: 1200px;
+        height: 50px;
+        border: 1px solid black;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+    .content_title > p {
+        width: 100px;
+        text-align: center;
+    }
+    .content{
+        position: relative;
+        left: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-height: 80%;
+        overflow-y: scroll;
+    }
+    .content>div{
+        width: 1200px;
+        height: 150px;
+        border: 1px solid black;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+    .content > div > p {
+        width: 100px;
+        text-align: center;
+    }
+    .btn{
+        margin: 10px;
+        font-size: 20px;
+        background-color: cornflowerblue;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
 </style>

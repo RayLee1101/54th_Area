@@ -14,16 +14,16 @@
         <a href="Comment.html">訪客留言</a>
         <a href="Book.html">訪客訂房</a>
         <a href="Order.html">訪客訂餐</a>
-        <a href="Transport.html">交通管理</a>
+        <a href="Transport.html">交通資訊</a>
         <a href="admin.php">網站管理</a>
     </nav>
     <div class="title">
-            <h1>訪客訂房 選擇訂房資訊</h1>
-        </div>
+        <h1>訪客訂房 選擇訂房資訊</h1>
+    </div>
     <div class="box">
         <div class="set">
             <p @click="month_set(-1)">前一個月<<</p>
-            <p>{{year}} {{month}}月</p>
+            <p>{{year}}年 {{month}}月</p>
             <p @click="month_set(1)">>>下一個月</p>
         </div>
         <table class="month" border="1">
@@ -171,14 +171,13 @@
                 let idx = 0;
                 const allday = new Date(year.value, month.value, 0).getDate()
                 for(let i = 1; i <= allday; i++){
-                    let d = new Date(year.value, month.value -1, i).getTime()
-                    const day = new Date(year.value, month.value -1, i).getDay()
-                    
                     let room_num = 0
+                    let d = new Date(year.value, month.value -1, i).getTime()
                     let resquest = await fetch(`api.php?get_day_num&day=${d}`)
                     let json = await resquest.json()
                     room_num = 8 - json.length
-
+                    
+                    const day = new Date(year.value, month.value -1, i).getDay()
                     DayInWeek.value[idx][day] = [i, room_num, false];
                     if(first.value != null){
                         if(d >= first.value && d <= last.value){
@@ -204,7 +203,11 @@
                         allroom[e.room - 1] = false
                     });
                 }
-                room.value = Math.floor((Math.random()*8)) + 1
+                let r = Math.floor((Math.random()*8)) + 1
+                while (!allroom[r - 1]) {
+                    r = Math.floor((Math.random()*8)) + 1
+                }
+                room.value = r
             }
             const select_room = () => {
 

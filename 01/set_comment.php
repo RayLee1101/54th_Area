@@ -49,10 +49,10 @@
             <textarea name="" id="" cols="30" rows="10" v-model="content" style="height: 150px;"></textarea>
             <label for="">內容</label>
         </div>
-        <div class="input" style="width:300px">
+        <!-- <div class="input" style="width:300px">
             <input type="text" v-model="number">
             <label for="">留言序號</label>
-        </div>
+        </div> -->
         <div class="send">
             <button class="reset" @click="reset">重設</button>
             <button class="login" @click="send">送出</button>

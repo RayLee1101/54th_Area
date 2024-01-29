@@ -14,7 +14,7 @@
             <a href="Comment.html">訪客留言</a>
             <a href="Book.html">訪客訂房</a>
             <a href="Order.html">訪客訂餐</a>
-            <a href="Transport.html">交通管理</a>
+            <a href="Transport.html">交通資訊</a>
             <a href="admin.php">網站管理</a>
         </nav>
         <div class="title">
@@ -58,7 +58,7 @@
                     phone.value = ""
                     remark.value = ""
                 }
-
+console.log(localStorage.getItem("first"));
                 const send = async() => {
                     let email_check = /[@.]+/g
                     if(name.value == ""){
@@ -82,6 +82,7 @@
                         alert("電話號碼有誤")
                         return
                     }
+                    
                     let formdata = new FormData()
                     formdata.append("name", name.value)
                     formdata.append("email", email.value)
@@ -95,10 +96,7 @@
                         body: formdata
                     })
                     let json = await resquest.json()
-                    if(json == "success")
-                        location.href="book_success.html?room_id"
-                    else
-                        alert(json)
+                    location.href=`book_success.php?room_id=${json}`
                 }
                 return{name, email, phone, remark, reset, send}
             }

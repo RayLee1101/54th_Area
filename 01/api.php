@@ -2,6 +2,7 @@
     include("pdo.php");
     session_start();
     if(isset($_GET['login'])){
+        $_SESSION['login'] = true;
         $account = $_POST['account'];
         $rows = $pdo -> query("SELECT * FROM `user` WHERE `account` = '$account'") -> fetch();
         if($rows == ""){
@@ -39,6 +40,11 @@
         $pdo -> query("UPDATE `comment` SET `delete_time` = current_timestamp() WHERE `comment`.`id` = $id");
         echo JSON_encode("success");
     }
+    if(isset($_GET['delete_comment'])){
+        $id = $_GET['id'];
+        $pdo -> query("DELETE FROM `comment` WHERE `comment`.`id` = $id");
+        echo JSON_encode("success");
+    }
     if(isset($_GET['set_comment'])){
         $id = $_GET['id'];
         $name = $_POST['name'];
@@ -55,5 +61,22 @@
         $day = $_GET['day'];
         $rows = $pdo -> query("SELECT* FROM `book` WHERE `firstday` <= $day AND `lastday` >= $day") -> fetchAll(2);
         echo JSON_encode($rows);
+    }
+    if(isset($_GET['new_book'])){
+        $date = date("Y-m-d");
+        $rows = $pdo -> query("SELECT * FROM `book` WHERE `create_day` = '$date'") -> fetchAll(2);
+        $room_id = date("Ymd") . "" . str_pad(count($rows) + 1,4,"0", STR_PAD_LEFT);
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $phone = $_POST['phone'];
+        $remark = $_POST['remark'];
+        $room = $_POST['room'];
+        $first = $_POST['first'];
+        $last = $_POST['last'];
+        $pdo -> query("INSERT INTO `book` (`id`, `room_id`, `name`, `email`, `phone`, `remark`, `room`, `firstday`, `lastday`, `create_day`) VALUES (NULL, '$room_id', '$name', '$email', '$phone', '$remark', '$room', '$first', '$last', current_timestamp())");
+        echo JSON_encode($room_id);
+    }
+    if(isset($_GET['get_book'])){
+
     }
 ?>
