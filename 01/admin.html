@@ -32,9 +32,6 @@
             <p></p>
             <p></p>
         </div>
-        <div class="content_title" v-if="selected=='book'">
-
-        </div>
         <div class="content" v-if="selected=='comment'">
             <div v-for="(item, idx) in comments">
                 <p>{{item.name}}</p>
@@ -46,16 +43,23 @@
                 <p><button class="btn" @click="content_delete(idx)">刪除</button></p>
             </div>
         </div>
+        <div class="content_title" v-if="selected=='book'">
+            <p>姓名</p>
+            <p>E-mail</p>
+            <p>電話</p>
+            <p>房間</p>
+            <p></p>
+            <p></p>
+        </div>
         <div class="content" v-if="selected=='book'">
-            <!-- <div v-for="(item, idx) in comments">
+            <div v-for="(item, idx) in books">
                 <p>{{item.name}}</p>
                 <p>{{item.email}}</p>
                 <p>{{item.phone}}</p>
-                <p>{{item.content}}</p>
-                <p>{{(item.delete_time==null)?'存在':'已刪除'}}</p>
-                <p><button class="btn" >詳細</button></p>
-                <p><button class="btn">刪除</button></p>
-            </div> -->
+                <p>Room{{item.room}}</p>
+                <p><button class="btn" @click="book_detail(idx)">詳細</button></p>
+                <p><button class="btn" @click="book_delete(idx)">刪除</button></p>
+            </div>
         </div>
     </div>
 </div>
@@ -65,15 +69,29 @@
         setup(){
             let selected = ref("comment")
             let comments = reactive([])
-            let orders = reactive([])
+            let books = reactive([])
             
             const content_detail = (idx) => {
-                location.href=`http://127.0.0.1/54th_Area/01/set_comment.php?id=${idx}`
+                location.href=`http://127.0.0.1/54th_Area/01/set_comment.php?id=${comments[idx].id}`
             }
 
             const content_delete = async(idx) => {
                 if(confirm("你確定要刪除嗎")){
                     let resquest = await fetch(`api.php?delete_comment&id=${comments[idx].id}`)
+                    let json = await resquest.json()
+                    if(json!="success")
+                        alert(json)
+                }
+            }
+
+            const book_detail = (idx) => {
+                localStorage.setItem("data", JSON.stringify(books[idx]))
+                location.href=`http://127.0.0.1/54th_Area/01/set_book.php?id=${books[idx].id}`
+            }
+
+            const book_delete = async(idx) => {
+                if(confirm("你確定要刪除嗎")){
+                    let resquest = await fetch(`api.php?delete_book&id=${books[idx].id}`)
                     let json = await resquest.json()
                     if(json!="success")
                         alert(json)
@@ -86,8 +104,14 @@
                 json.forEach(element => {
                     comments.push(element)
                 });
+                resquest = await fetch("api.php?get_all_book")
+                json = await resquest.json()
+                json.forEach(element => {
+                    element.room = String(element.room).padStart(2,'0')
+                    books.push(element)
+                });
             })
-            return {selected, comments, orders, content_detail, content_delete}
+            return {selected, comments, books, content_detail, content_delete, book_detail, book_delete}
         }
     }).mount("#app")
 </script>

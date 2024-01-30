@@ -76,7 +76,18 @@
         $pdo -> query("INSERT INTO `book` (`id`, `room_id`, `name`, `email`, `phone`, `remark`, `room`, `firstday`, `lastday`, `create_day`) VALUES (NULL, '$room_id', '$name', '$email', '$phone', '$remark', '$room', '$first', '$last', current_timestamp())");
         echo JSON_encode($room_id);
     }
+    if(isset($_GET['get_all_book'])){
+        $rows = $pdo -> query("SELECT * FROM `book`") -> fetchAll(2);
+        echo JSON_encode($rows);
+    }
     if(isset($_GET['get_book'])){
-
+        $id = $_GET['id'];
+        $rows = $pdo -> query("SELECT * FROM `book` WHERE `id` = $id") -> fetch(2);
+        echo JSON_encode($rows);
+    }
+    if(isset($_GET['delete_book'])){
+        $id = $_GET['id'];
+        $pdo -> query("DELETE FROM `book` WHERE `id` = $id");
+        echo JSON_encode("success");
     }
 ?>
